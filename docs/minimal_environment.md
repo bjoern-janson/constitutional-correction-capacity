@@ -1,4 +1,4 @@
-# Minimal Environment Specification for Constitutional Correction Experiments
+# Minimal Environment Specification for Constitutional Correction Experiments v0.2
 
 ## Purpose
 
@@ -8,17 +8,13 @@ Define a minimal external environment where:
 - \(\Omega\) can be measured
 - \(C_{obs}\), \(C_{beh}\), and \(C_{rev}\) can be manipulated
 - \(A\) can be measured
-- the condition
-
-\[
-\Delta\Omega \le C
-\]
-
-can be tested
+- the condition \(\Delta\Omega \leq C\) can be tested
 
 This document specifies the world, not the agent.
 
-The goal is not realism. The goal is creating the smallest possible universe where a self-modifying system can become more powerful while losing the ability of reality to change what it becomes.
+The goal of v0.2 is to create a recoverable distribution shift.
+
+The environment must challenge the agent without making recovery impossible for all conditions.
 
 ---
 
@@ -26,237 +22,214 @@ The goal is not realism. The goal is creating the smallest possible universe whe
 
 ## Definition
 
-The environment is represented as:
+The environment contains:
 
 \[
-E_t
-\]
-
-The environment evolves according to:
-
-\[
-E_{t+1}=F(E_t,a_t)
-\]
-
-where:
-
-- \(E_t\) = true external state
-- \(a_t\) = agent intervention
-- \(F\) = world transition function
-
-The agent never directly observes \(E_t\).
-
-The observation channel is:
-
-\[
-O_t=h(E_t)
-\]
-
-where \(h\) introduces partial observability, noise, or delay.
-
----
-
-# 2. Minimal Environment Instance (v0.1)
-
-The first implementation uses a hidden-parameter environment:
-
-\[
-E_t=(x_t,\theta_t)
+E_t = (x_t,\theta_t)
 \]
 
 where:
 
 - \(x_t\) = observable world state
-- \(\theta_t\) = hidden causal structure governing the environment
+- \(\theta_t\) = hidden environmental rule
 
-The agent can observe consequences of \(\theta_t\), but cannot directly access it.
-
-The environment may change:
+The environment evolves through:
 
 \[
-\theta_t \rightarrow \theta_{t+1}
+E_{t+1}=F(E_t,a_t)
 \]
 
-creating distribution shift.
-
-The purpose of hidden parameters is to ensure that previous success does not guarantee future success.
+The agent never directly observes \(E_t\).
 
 ---
 
-# 3. Required Environmental Properties
+# 2. Observation Channel
 
-The environment must contain three properties.
-
-## Hidden structure
-
-The true state cannot be perfectly observed.
+The agent receives:
 
 \[
 O_t=h(E_t)
 \]
 
-The agent must construct an internal representation of reality.
+The observation channel must contain uncertainty.
+
+Properties:
+
+- partial information
+- noise
+- possible delay
+
+The agent must infer hidden structure from observations.
 
 ---
 
-## Distribution shift
+# 3. Environmental Structure
 
-The environment must be capable of invalidating previously successful strategies.
+The environment must contain three properties.
+
+## 3.1 Hidden Structure
+
+The true environmental state is not directly available.
+
+\[
+E_t \neq O_t
+\]
+
+The agent must construct a representation:
+
+\[
+R_t
+\]
+
+to predict and act.
+
+---
+
+## 3.2 Recoverable Distribution Shift
+
+The environment can change in ways that invalidate previous strategies.
+
+However, the shift must preserve the possibility of recovery.
+
+v0.2 requirement:
+
+The agent should be able to discover the new regime through continued interaction.
 
 Examples:
 
-- changing reward landscape
-- changing causal relationships
-- hidden parameter drift
-- altered transition dynamics
+- gradual parameter drift
+- changed reward weighting
+- altered causal relationship
+- hidden rule transition with observable consequences
 
-The change must be detectable only through interaction with reality.
+Avoid:
+
+- complete information inversion
+- permanent loss of reward signal
+- changes impossible to infer from observations
 
 ---
 
-## Ground truth
+## 3.3 Ground Truth
 
-The experimenter must have access to the full environment state:
-
-\[
-E_t
-\]
+The experimenter must know the true environment state.
 
 This allows measurement of:
 
 - representation accuracy
-- reachability
-- correction pathways
-- adaptation
-
-The agent does not receive this information directly.
+- prediction error
+- intervention success
+- recovery time
 
 ---
 
 # 4. Agent Interface
 
-## Observation channel
+## Observation
 
 \[
 O_t=h(E_t)
 \]
 
-The implementation must define:
+Define:
 
 - observation noise
+- observation frequency
 - information delay
-- missing variables
-- observation bandwidth
 
 ---
 
-## Action channel
+## Action
 
-The agent affects the environment through:
+The agent selects:
 
 \[
-a_t \rightarrow E_{t+1}
+a_t
 \]
 
-The implementation must define:
+which influences:
 
-- available interventions
+\[
+E_{t+1}=F(E_t,a_t)
+\]
+
+Define:
+
+- available actions
 - intervention strength
-- limits on influence
-
-Actions must have real consequences so that controllable reachability is meaningful.
+- influence limitations
 
 ---
 
 # 5. Environmental Challenge
 
-The environment must create pressure between:
+The environment should create tension between:
 
 \[
-\text{increasing capability}
+\text{expanding capability}
 \]
 
-and
+and:
 
 \[
 \text{maintaining correction}
 \]
 
-Example:
+Expected pattern:
 
-A changing fitness landscape:
+1. Agent discovers an initially useful strategy.
+2. Agent improves performance.
+3. Hidden environmental conditions change.
+4. Agent must update both:
+   - its representation \(R\)
+   - potentially its adaptation mechanism \(A\)
 
-1. The agent discovers a successful strategy.
-2. The agent increases its reachable influence.
-3. The environment changes.
-4. The agent must update its adaptation mechanism.
-5. Systems without constitutional correction should become increasingly fragile.
+The purpose is to test whether access from reality to \(A\) changes long-term recovery.
 
 ---
 
 # 6. Measurement Hooks
 
-At every timestep the environment must allow estimation of:
-
-\[
-R_t,\Omega_t,C_t,A_t
-\]
+At every timestep measure:
 
 ---
 
-## Representation (\(R_t\))
+## Representation
 
-Definition:
-
-The quality of the system's internal model of external structure.
+\[
+R_t
+\]
 
 Candidate measurements:
 
 - prediction accuracy
-- predictive information
-- model compression efficiency
-- environment-model error
-
-Example:
-
-\[
-R_t \approx -L(E_{future},\hat{E}_{future})
-\]
-
-Limitations:
-
-A good representation does not guarantee alignment or correction.
+- model error
+- compression efficiency
+- environmental state estimation quality
 
 ---
 
-## Reachability (\(\Omega_t\))
+## Reachability
 
-Definition:
-
-The set of future states the system can reliably influence.
+\[
+\Omega_t
+\]
 
 Candidate measurements:
 
-- number of controllable future states
+- controllable future states
 - intervention success rate
-- reachable state volume
-
-Example:
-
-\[
-\Omega_t=
-\{E_{future}|\exists a_{0:T}, P(E_{future}|a_{0:T},S_t)>\epsilon\}
-\]
-
-Limitations:
-
-Greater reachability does not imply greater adaptability.
+- achievable outcomes under available actions
 
 ---
 
-## Correction (\(C_t\))
+## Correction Capacity
 
-Correction capacity measures whether reality can influence the system at increasing depths.
+\[
+C_t
+\]
+
+Composite:
 
 \[
 C=C_{obs}\cdot C_{beh}\cdot C_{rev}
@@ -270,15 +243,9 @@ C=C_{obs}\cdot C_{beh}\cdot C_{rev}
 C_{obs}=I(E;O)
 \]
 
-Question:
-
-Can reality provide information that contradicts the system?
-
 Measures:
 
-- environment information entering observations
-- predictive error signals
-- feedback bandwidth
+Can reality provide information that contradicts the current model?
 
 ---
 
@@ -288,38 +255,41 @@ Measures:
 C_{beh}=I(O;\pi)
 \]
 
-Question:
-
-Can observations change future actions?
-
 Measures:
 
-- policy sensitivity to feedback
-- behavioral adaptation after error
-- response to environmental changes
+Can observations change future actions?
 
 ---
 
 ### Constitutional Correction
 
 \[
-C_{rev}
-\]
-
-Question:
-
-Can reality modify the mechanism that determines how the system changes itself?
-
-Candidate definition:
-
-\[
 C_{rev}=I(E;\Delta A)\cdot P(E\rightsquigarrow A_{rev})
 \]
 
-where:
+Measures:
 
-- \(I(E;\Delta A)\) = empirical influence of reality on adaptation changes
-- \(P(E\rightsquigarrow A_{rev})\) = structural accessibility of the revision pathway
+Can reality modify the mechanism that determines future adaptation?
+
+---
+
+## Adaptation
+
+\[
+A_t
+\]
+
+Measure:
+
+- changes to learning rules
+- changes to update mechanism
+- changes to search strategy
+
+Important distinction:
+
+Learning changes system state.
+
+Adaptation changes the process that generates future learning.
 
 ---
 
@@ -331,9 +301,9 @@ Introduce:
 \lambda=C_{rev}
 \]
 
-as an experimental control parameter.
+as the experimental control variable.
 
-The purpose is to isolate the effect of constitutional correction.
+Conditions:
 
 ---
 
@@ -353,7 +323,7 @@ Reality can modify the adaptation mechanism.
 0<\lambda<1
 \]
 
-Some corrective pathways remain.
+Some pathways from reality to adaptation remain.
 
 ---
 
@@ -363,24 +333,21 @@ Some corrective pathways remain.
 \lambda=0
 \]
 
-The system can modify itself, but reality cannot influence the mechanism responsible for those modifications.
+The system can still update representations and policies, but environmental outcomes cannot modify the adaptation mechanism.
 
 ---
 
-The implementation must ensure:
+# 8. Experimental Requirements
 
-Same:
+All agents must share:
 
-- compute budget
-- initial conditions
-- observation channel
-- action space
+- same environment
+- same compute budget
+- same initial conditions
+- same observation channel
+- same action space
 
-Different:
-
-- constitutional correction access
-
-The only manipulated variable should be:
+The only manipulated variable:
 
 \[
 C_{rev}
@@ -388,65 +355,57 @@ C_{rev}
 
 ---
 
-# 8. Adaptation (\(A_t\))
+# 9. Expected Measurements
 
-Definition:
+After environmental change measure:
 
-The ability of the system to modify the mechanism that produces future representations and actions.
+## Recovery
 
-Adaptation is not ordinary learning.
+How quickly does performance return?
 
-Learning:
+---
+
+## Decoupling
+
+Does internal optimization diverge from external success?
+
+---
+
+## Adaptation Drift
+
+Does the adaptation mechanism continue changing in a direction that no longer improves environmental performance?
+
+---
+
+# 10. v0.1 Revision
+
+The first environment version used a complete binary rule flip:
 
 \[
-R_t \rightarrow R_{t+1}
+\theta_0 \rightarrow \theta_1
 \]
 
-Adaptation:
+Result:
 
-\[
-A_t \rightarrow A_{t+1}
-\]
+All agents failed to recover.
 
-Candidate measurements:
+Interpretation:
 
-- changes to learning rules
-- changes to search strategy
-- changes to optimization process
-- architectural modifications
+The shift exceeded the recovery capacity of the environment-agent system.
 
-Limitations:
+v0.2 changes:
 
-A system may become better at self-modification while becoming less connected to reality.
+- maintain hidden structure
+- maintain distribution shift
+- preserve recoverability
 
----
+The goal is not to make the environment easier.
 
-# 9. Expected Failure Surface
-
-The environment should allow observation of:
-
-## Recovery failure
-
-After environmental change:
-
-- How quickly does the system recover?
-- Does performance return?
+The goal is to create a measurable difference between systems with different levels of constitutional correction.
 
 ---
 
-## Reality decoupling
-
-Does internal optimization continue while external performance decreases?
-
----
-
-## Adaptation lock-in
-
-Does self-modification continue while becoming less responsive to environmental information?
-
----
-
-# 10. Out of Scope for v0.1
+# 11. Out of Scope for v0.2
 
 Excluded:
 
@@ -456,11 +415,6 @@ Excluded:
 - complex social environments
 - full alignment solutions
 
-The purpose of v0.1 is not to model intelligence generally.
+The purpose of v0.2 is not realism.
 
-The purpose is to isolate whether constitutional correction produces measurable differences in recursive adaptive systems.
-
----
-
-\text{Stage 3: Minimal Simulation}
-\]
+The purpose is isolating whether constitutional correction produces measurable differences in recursive adaptive systems.
