@@ -462,17 +462,5 @@ The purpose is to isolate whether constitutional correction produces measurable 
 
 ---
 
-# Stage 2B Exit Condition
-
-Stage 2B is complete when:
-
-1. Another researcher can implement the same environment without accepting the theory.
-2. \(R,\Omega,C_{obs},C_{beh},C_{rev},A\) have measurable proxies.
-3. \(C_{rev}\) can be independently manipulated.
-4. The environment can produce genuine distribution shift.
-
-Once these conditions are satisfied, the project proceeds to:
-
-\[
 \text{Stage 3: Minimal Simulation}
 \]
