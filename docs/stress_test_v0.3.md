@@ -2,170 +2,200 @@
 
 ## Purpose
 
-Design an experiment that pushes a recursive adaptive system toward the proposed instability boundary:
+The v0.2 experiment validated that the constitutional correction parameter:
+
+\[
+\lambda = C_{rev}
+\]
+
+can be controlled and measured.
+
+However, the environment did not create a regime where reachability expansion exceeded correction capacity.
+
+The purpose of v0.3 is to create a system where:
 
 \[
 \Delta\Omega > C_{rev}
 \]
 
-The purpose is not to prove the framework.
+is possible.
 
-The purpose is to create conditions where constitutional correction becomes a limiting factor.
+The goal is not to prove failure.
 
----
-
-# 1. Motivation
-
-Previous experiments validated the experimental mechanism:
-
-- \(\lambda\) successfully controls influence from reality into the adaptation mechanism.
-- Different values of \(\lambda\) produce different changes in \(A\).
-
-However, the system remained inside a safe regime:
-
-\[
-\Delta\Omega \ll C
-\]
-
-The agent adapted successfully because environmental correction was always sufficient.
-
-v0.3 introduces pressure on the correction pathway.
+The goal is to create conditions where constitutional correction becomes the limiting factor.
 
 ---
 
-# 2. Core Hypothesis Under Test
+# 1. Core Hypothesis Under Test
 
-A recursively adaptive system becomes unstable when:
+A recursively adaptive system can increase its controllable reachability while losing the ability of reality to modify its adaptation mechanism.
+
+The predicted danger regime:
 
 \[
 \Delta\Omega > C_{rev}
 \]
 
-Meaning:
+should produce:
 
-The system's ability to expand controllable reachability grows faster than reality's ability to modify the mechanism generating future adaptation.
-
-Expected signatures:
-
-- reduced recovery after distribution shift
-- increasing divergence between internal optimization and environmental success
-- continued adaptation despite decreasing external performance
-- greater fragility after self-modification
+- slower recovery after environmental change
+- increasing divergence between internal adaptation and external performance
+- reduced ability of reality to reshape future adaptation
 
 ---
 
-# 3. Required Changes From v0.2
+# 2. Stress Mechanism
 
-## Increase capability growth pressure
+## Expanding Reachability
 
-The agent should have a mechanism where changing \(A\) can increase future influence.
+The agent begins with limited influence.
 
-Examples:
+Over time, successful adaptation unlocks:
 
-- larger action space
-- improved search depth
-- expanded intervention ability
-- faster learning capacity
+- additional actions
+- stronger interventions
+- larger controllable future space
 
-The goal:
+Therefore:
 
 \[
-A \rightarrow \Omega
+\Omega_{t+1} > \Omega_t
 \]
 
----
-
-## Increase environmental pressure
-
-The environment should contain:
-
-- repeated distribution shifts
-- hidden changes
-- delayed feedback
-- changing reward structure
-
-The goal:
-
-Prevent any single strategy from remaining permanently optimal.
+is possible.
 
 ---
 
-## Preserve measurement ability
+# 3. Environment
 
-The experimenter must still measure:
+The environment contains:
 
-- true environment state
-- representation quality
-- reachability
-- adaptation changes
-- correction pathways
+\[
+E_t=(x_t,\theta_t)
+\]
+
+where:
+
+- \(x_t\): observable state
+- \(\theta_t\): hidden rule governing success
+
+The agent observes:
+
+\[
+O_t=h(E_t)
+\]
+
+The true rule is never directly revealed.
 
 ---
 
-# 4. Experimental Conditions
+# 4. Action Expansion
 
-Three agents remain:
+Initial action space:
 
-| Agent | Self modification | \(\lambda=C_{rev}\) |
+\[
+A_0=\{a_1,a_2\}
+\]
+
+Successful adaptation can unlock additional actions:
+
+\[
+A_{t+1}=A_t+\Delta A
+\]
+
+Expanded actions increase:
+
+\[
+\Omega_t
+\]
+
+The experiment must track:
+
+- number of available actions
+- intervention strength
+- controllable future states
+
+---
+
+# 5. Agent Conditions
+
+Three conditions remain:
+
+| Agent | Self-modification | λ = C_rev |
 |---|---|---|
-| 1 | No | N/A |
+| 1 | No | baseline |
 | 2 | Yes | 1.0 |
 | 3 | Yes | 0.0 |
 
-All other factors remain identical.
+All other variables remain identical:
+
+- compute
+- initial state
+- observations
+- action opportunities
+- environment
+
+Only constitutional correction changes.
 
 ---
 
-# 5. Expected Dynamics
+# 6. Meaning of λ
 
-## Early phase
+λ controls whether reality can modify the adaptation mechanism.
 
-All agents may improve.
+## λ = 1.0
 
-The low-correction agent may improve faster because it can modify itself without environmental constraints.
-
----
-
-## Stress phase
-
-Environmental changes increase.
-
-Prediction:
-
-### High constitutional correction
+Environmental outcomes can modify:
 
 \[
-\lambda=1
+A_t
 \]
 
-The adaptation mechanism remains coupled to reality.
-
-Expected:
-- slower but stable improvement
-- better recovery
-- lower divergence
+The system can change how it learns.
 
 ---
 
-### Low constitutional correction
+## λ = 0.0
+
+Environmental outcomes can still modify:
 
 \[
-\lambda=0
+R_t
 \]
 
-The adaptation mechanism becomes isolated.
+and:
 
-Expected:
-- possible faster initial improvement
-- increasing mismatch after environmental change
-- slower recovery
-- adaptation drift
+\[
+\pi_t
+\]
+
+but cannot modify:
+
+\[
+A_t
+\]
+
+The system can learn, but cannot change the process that determines learning.
 
 ---
 
-# 6. Measurements
+# 7. Measurements
 
-Track:
+Track every timestep:
+
+## Representation
+
+\[
+R_t
+\]
+
+Measures:
+
+- prediction accuracy
+- model error
+- environmental understanding
+
+---
 
 ## Reachability
 
@@ -173,11 +203,31 @@ Track:
 \Omega_t
 \]
 
-Measure:
+Measures:
 
-- achievable outcomes
+- action space size
 - intervention success
-- influence expansion
+- controllable futures
+
+---
+
+## Correction
+
+\[
+C_t
+\]
+
+Track:
+
+\[
+C=C_{obs}\cdot C_{beh}\cdot C_{rev}
+\]
+
+Especially:
+
+\[
+C_{rev}=I(E;\Delta A)\cdot P(E\rightsquigarrow A_{rev})
+\]
 
 ---
 
@@ -187,25 +237,11 @@ Measure:
 A_t
 \]
 
-Measure:
+Track:
 
-- update mechanism changes
-- learning rule changes
-- search strategy changes
-
----
-
-## Constitutional correction
-
-\[
-C_{rev}
-\]
-
-Controlled by:
-
-\[
-\lambda
-\]
+- changes to learning rule
+- changes to search strategy
+- changes to update parameters
 
 ---
 
@@ -217,91 +253,71 @@ Measure:
 D_t=d(A_t,A^*_{env})
 \]
 
-Where:
+where:
 
-- \(A_t\) = current adaptation mechanism
-- \(A^*_{env}\) = adaptation strategy best suited to the current environment
-
----
-
-# 7. Success Criteria
-
-The stress test produces useful separation if:
-
-\[
-\lambda=0
-\]
-
-shows:
-
-- higher early capability growth
-- increasing adaptation divergence
-- worse recovery after environmental changes
-
-while:
-
-\[
-\lambda=1
-\]
-
-maintains:
-
-- stronger environmental coupling
-- better long-term stability
+- \(A_t\): current adaptation mechanism
+- \(A^*_{env}\): adaptation mechanism best suited for the current environment
 
 ---
 
-# 8. Falsification
+# 8. Environmental Shift
+
+After initial growth:
+
+\[
+\theta_0 \rightarrow \theta_1
+\]
+
+The previous strategy becomes partially invalid.
+
+The shift should test whether the agent can redirect its adaptation process.
+
+---
+
+# 9. Expected Signatures
+
+## If the hypothesis is supported
+
+Low λ agent:
+
+- expands reachability
+- continues modifying itself
+- shows increasing \(D_t\)
+- recovers slower after shifts
+
+High λ agent:
+
+- may grow slower initially
+- maintains lower divergence
+- adapts after environmental changes
+
+---
+
+# 10. Falsification
 
 The hypothesis is weakened if:
 
-A system with:
+A low λ agent maintains equal or superior:
 
-\[
-C_{rev}\approx0
-\]
+- recovery speed
+- external performance
+- adaptation quality
+- robustness under repeated environmental shifts
 
-maintains equal or superior:
-
-- adaptability
-- recovery
-- environmental alignment
-
-under repeated shifts.
+while constitutional correction remains unavailable.
 
 ---
 
-# 9. Scope
+# 11. Out of Scope
 
-v0.3 is still a minimal simulation.
-
-Excluded:
+v0.3 does not include:
 
 - neural networks
 - LLMs
-- realistic agents
-- human feedback systems
+- realistic environments
+- human feedback
+- complex objectives
 
-The purpose is isolating the constitutional correction mechanism.
+The purpose is isolating one mechanism:
 
----
-
-# 10. Exit Condition
-
-Move forward only if the stress test creates a regime where:
-
-\[
-\Delta\Omega
-\]
-
-and
-
-\[
-C_{rev}
-\]
-
-are meaningfully separated.
-
-The goal is not failure.
-
-The goal is reaching the boundary where the theory makes a distinct prediction.
+Can a system become more powerful while losing reality's ability to reshape how it improves?
