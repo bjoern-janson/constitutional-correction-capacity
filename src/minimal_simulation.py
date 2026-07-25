@@ -3,46 +3,65 @@ import random
 
 class Environment:
     """
-    Minimal hidden-rule environment.
+    Minimal recoverable distribution-shift environment.
 
-    The agent observes noisy information about the world
-    but never sees the true rule theta directly.
+    Hidden rule theta changes gradually instead of flipping completely.
+    This allows the agent to recover if its adaptation process remains connected
+    to environmental feedback.
     """
 
     def __init__(self, seed=0):
         random.seed(seed)
 
-        self.theta = 0
-        self.shift_time = None
+        self.theta = 0.2
+        self.shift_started = False
 
     def observe(self):
-        # noisy observation of hidden state
-        return self.theta + random.gauss(0, 0.2)
+        """
+        Agent receives noisy information about the hidden rule.
+        """
+
+        return self.theta + random.gauss(0, 0.05)
 
     def reward(self, action):
-        # correct action receives reward
-        return 1 if action == self.theta else 0
+        """
+        Action is rewarded when close to the hidden rule.
+        """
 
-    def shift(self):
-        # distribution shift
-        self.theta = 1 - self.theta
+        error = abs(action - self.theta)
+
+        return max(0, 1 - error)
+
+    def shift(self, amount=0.5):
+        """
+        Recoverable environmental change.
+
+        The new state is different but still discoverable.
+        """
+
+        self.theta += amount
 
 
 class Agent:
     """
-    Minimal recursive adaptive agent.
+    Recursive adaptive agent.
 
     lambda controls constitutional correction:
-    - lambda=1: reality can modify adaptation mechanism
-    - lambda=0: adaptation mechanism is isolated
+
+    lambda = 1:
+        Reality can modify the adaptation mechanism.
+
+    lambda = 0:
+        Reality can modify representation,
+        but cannot modify the learning process itself.
     """
 
     def __init__(self, lam):
+
         self.lam = lam
 
         # Representation R
-        # belief about hidden environmental rule
-        self.R = 0.5
+        self.R = 0.2
 
         # Adaptation mechanism A
         # learning rate
@@ -51,23 +70,25 @@ class Agent:
         self.history = []
 
     def policy(self):
-        # policy derived from representation
-        return int(self.R > 0.5)
+        """
+        Policy derived from representation.
+        """
+
+        return self.R
 
     def update(self, observation, reward):
+
         old_A = self.A
 
-        # normal learning:
-        # reality changes representation
-        error = reward - self.R
+        prediction_error = observation - self.R
 
-        self.R += self.A * error
+        # Representation update
+        self.R += self.A * prediction_error
 
-        # constitutional correction:
-        # reality changes the adaptation mechanism itself
-        self.A += self.lam * 0.01 * error
+        # Constitutional correction
+        # Reality modifies the adaptation mechanism
+        self.A += self.lam * 0.01 * prediction_error
 
-        # keep learning rate bounded
         self.A = max(0.001, min(self.A, 1.0))
 
         delta_A = abs(self.A - old_A)
@@ -75,16 +96,16 @@ class Agent:
         return delta_A
 
 
-def run(lam, steps=200, shift_time=100):
+def run(lam, steps=300, shift_time=150):
 
     env = Environment(seed=42)
+
     agent = Agent(lam)
 
     trace = []
 
     for t in range(steps):
 
-        # introduce hidden environmental change
         if t == shift_time:
             env.shift()
 
@@ -99,57 +120,83 @@ def run(lam, steps=200, shift_time=100):
             reward
         )
 
-        trace.append({
-            "t": t,
-            "lambda": lam,
-            "theta": env.theta,
+        trace.append(
+            {
+                "t": t,
+                "lambda": lam,
+                "theta": env.theta,
 
-            # Representation quality proxy
-            "R": agent.R,
+                # Representation quality proxy
+                "R": agent.R,
 
-            # Adaptation mechanism
-            "A": agent.A,
+                # Adaptation mechanism
+                "A": agent.A,
 
-            # Adaptation magnitude
-            "delta_A": delta_A,
+                # Change in adaptation mechanism
+                "delta_A": delta_A,
 
-            # External performance
-            "reward": reward
-        })
+                # External performance
+                "reward": reward,
+
+                # Distance from reality
+                "representation_error": abs(
+                    env.theta - agent.R
+                )
+            }
+        )
 
     return trace
 
 
-def summarize(trace, shift_time=100):
+def summarize(trace, shift_time=150):
 
     before = trace[:shift_time]
     after = trace[shift_time:]
 
     before_reward = sum(
-        x["reward"] for x in before
+        x["reward"]
+        for x in before
     ) / len(before)
 
     after_reward = sum(
-        x["reward"] for x in after
+        x["reward"]
+        for x in after
     ) / len(after)
 
     return {
+
         "lambda": trace[0]["lambda"],
-        "reward_before_shift": round(before_reward, 3),
-        "reward_after_shift": round(after_reward, 3),
-        "final_R": round(trace[-1]["R"], 3),
-        "final_A": round(trace[-1]["A"], 3),
-        "total_adaptation": round(
-            sum(x["delta_A"] for x in trace),
-            3
-        )
+
+        "reward_before_shift":
+            round(before_reward, 3),
+
+        "reward_after_shift":
+            round(after_reward, 3),
+
+        "final_R":
+            round(trace[-1]["R"], 3),
+
+        "final_A":
+            round(trace[-1]["A"], 3),
+
+        "final_representation_error":
+            round(trace[-1]["representation_error"], 3),
+
+        "total_adaptation":
+            round(
+                sum(
+                    x["delta_A"]
+                    for x in trace
+                ),
+                3
+            )
     }
 
 
 if __name__ == "__main__":
 
-    print("Constitutional Correction Simulation v0.1")
-    print("----------------------------------------")
+    print("Constitutional Correction Simulation v0.2")
+    print("-----------------------------------------")
 
     for lam in [1.0, 0.5, 0.0]:
 
